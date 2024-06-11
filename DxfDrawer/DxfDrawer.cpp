@@ -1,4 +1,4 @@
-#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib,"d2d1.lib")
 #pragma comment(lib, "Dwrite")
 
 #include "pch.h"
