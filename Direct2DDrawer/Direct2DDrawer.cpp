@@ -13,9 +13,10 @@
 //-----------------------------------------------------------------------------
 ID3D11Device*           dev;
 ID3D11DeviceContext*    devcon;
-IDXGISwapChain*         swapchain;
-ID3D11RenderTargetView* backbuffer;
+IDXGISwapChain*         m_pSwapChain;
 HWND                    m_hwnd;
+IDXGISurface* pBackBuffer;
+ID2D1RenderTarget*&     m_pBackBufferRT;
 ID2D1Factory1*          m_pDirect2dFactory;
 ID2D1HwndRenderTarget*  m_pRenderTarget;
 ID2D1SolidColorBrush*   m_pLightSlateGrayBrush;
@@ -105,6 +106,7 @@ HRESULT CreateDeviceResources()
 //-----------------------------------------------------------------------------
 HRESULT InitD3D(HWND hWnd)
 {
+    HRESULT hr;
     // create a struct to hold information about the swap chain
     DXGI_SWAP_CHAIN_DESC scd;
 
@@ -120,7 +122,7 @@ HRESULT InitD3D(HWND hWnd)
     scd.Windowed = TRUE;                                    // windowed/full-screen mode
 
     // create a device, device context and swap chain using the information in the scd struct
-    D3D11CreateDeviceAndSwapChain(NULL,
+    hr = D3D11CreateDeviceAndSwapChain(NULL,
         D3D_DRIVER_TYPE_HARDWARE,
         NULL,
         NULL,
@@ -128,23 +130,37 @@ HRESULT InitD3D(HWND hWnd)
         NULL,
         D3D11_SDK_VERSION,
         &scd,
-        &swapchain,
+        &m_pSwapChain,
         &dev,
         NULL,
         &devcon);
+    if (FAILED(hr)) { return E_FAIL; }
 
-    // get the address of the back buffer
-    ID3D11Texture2D* pBackBuffer;
-    swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
+    // Create the DXGI Surface Render Target.
+    float dpi = GetDpiForWindow(hWnd);
 
-    // use the back buffer address to create the render target
-    dev->CreateRenderTargetView(pBackBuffer, NULL, &backbuffer);
-    pBackBuffer->Release();
+    D2D1_RENDER_TARGET_PROPERTIES props =
+        D2D1::RenderTargetProperties(
+            D2D1_RENDER_TARGET_TYPE_DEFAULT,
+            D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED),
+            dpi,
+            dpi);
 
-    // set the render target as the back buffer
-    devcon->OMSetRenderTargets(1, &backbuffer, NULL);
+    // Get a surface in the swap chain
+    hr = m_pSwapChain->GetBuffer(
+        0,
+        IID_PPV_ARGS(&pBackBuffer)
+    );
+    // Get a surface in the swap chain
+    hr = m_pSwapChain->GetBuffer(
+        0,
+        IID_PPV_ARGS(&pBackBuffer)
+    );
 
-  
+    // Create a Direct2D render target that can draw into the surface in the swap chain
+    hr = m_pDirect2dFactory->CreateDxgiSurfaceRenderTarget(pBackBuffer, &props, &m_pBackBufferRT);
+
+
 
     return S_OK;
 }
@@ -155,9 +171,29 @@ HRESULT InitD3D(HWND hWnd)
 //-----------------------------------------------------------------------------
 HRESULT InitGeometry()
 {
-    
+    HRESULT hr;
 
-    return S_OK;
+    if (m_pBackBufferRT)
+    {
+        m_pBackBufferRT->BeginDraw();
+
+        D2D1_SIZE_F targetSize = m_pBackBufferRT->GetSize();
+
+        for (int i = 0; i <= targetSize.width; i += (targetSize.width / 50))
+        {
+            ID2D1PathGeometry* path_geometry;
+            m_pDirect2dFactory->CreatePathGeometry(&path_geometry);
+
+            ID2D1GeometrySink* pSink = NULL;
+            hr = path_geometry->Open(&pSink);
+            pSink->BeginFigure(D2D1::Point2F(i, 0), D2D1_FIGURE_BEGIN_HOLLOW);
+            pSink->AddLine(D2D1::Point2F(i, targetSize.height));
+        }
+
+        m_pBackBufferRT->EndDraw();
+    }
+
+    return hr;
 }
 
 //-----------------------------------------------------------------------------
@@ -192,8 +228,8 @@ extern "C" __declspec(dllexport) IDirect3DSurface9* WINAPI Initialize(HWND hwnd,
 //-----------------------------------------------------------------------------
 extern "C" __declspec(dllexport) VOID WINAPI Cleanup()
 {
-    if (swapchain != NULL)
-        swapchain->Release();
+    if (m_pSwapChain != NULL)
+        m_pSwapChain->Release();
 
     if (dev != NULL)
         dev->Release();
