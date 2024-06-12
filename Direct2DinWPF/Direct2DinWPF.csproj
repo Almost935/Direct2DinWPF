@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DxfDrawer\DxfDrawer.vcxproj" />
+    <ProjectReference Include="..\Direct2DDrawer\Direct2DDrawer.vcxproj" />
   </ItemGroup>
 
 </Project>

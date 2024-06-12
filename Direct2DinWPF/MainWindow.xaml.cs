@@ -15,11 +15,11 @@ namespace Direct2DinWPF
 {
     class Sample
     {
-        [DllImport("DxfDrawer.dll")]
+        [DllImport("Direct2DDrawer.dll")]
         internal static extern IntPtr Initialize(IntPtr hwnd, int width, int height);
-        [DllImport("DxfDrawer.dll")]
+        [DllImport("Direct2DDrawer.dll")]
         internal static extern void Render();
-        [DllImport("DxfDrawer.dll")]
+        [DllImport("Direct2DDrawer.dll")]
         internal static extern void Cleanup();
     }
 
