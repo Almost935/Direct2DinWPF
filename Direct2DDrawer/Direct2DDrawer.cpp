@@ -30,17 +30,17 @@ SafeRelease(
 //-----------------------------------------------------------------------------
 // Global variables
 //-----------------------------------------------------------------------------
-ID3D11Device* dev;
-ID3D11DeviceContext* devcon;
-IDXGISwapChain* m_pSwapChain;
+ID3D11Device*						dev;
+ID3D11DeviceContext*				devcon;
+IDXGISwapChain*						m_pSwapChain;
 HWND                                m_hwnd;
-IDXGISurface* pBackBuffer;
-ID2D1RenderTarget*& m_pBackBufferRT;
-ID2D1Factory1* m_pDirect2dFactory;
-ID2D1HwndRenderTarget* m_pRenderTarget;
-ID2D1SolidColorBrush* m_pLightSlateGrayBrush;
-ID2D1SolidColorBrush* m_pCornflowerBlueBrush;
-ID2D1StrokeStyle1* strokeStyleFixedThickness;
+IDXGISurface*						pBackBuffer;
+ID2D1RenderTarget*					m_pBackBufferRT;
+ID2D1Factory1*						m_pDirect2dFactory;
+ID2D1HwndRenderTarget*				m_pRenderTarget;
+ID2D1SolidColorBrush*				m_pLightSlateGrayBrush;
+ID2D1SolidColorBrush*				m_pCornflowerBlueBrush;
+ID2D1StrokeStyle1*					strokeStyleFixedThickness;
 
 //-----------------------------------------------------------------------------
 // Name: CreateDeviceIndependentResources()

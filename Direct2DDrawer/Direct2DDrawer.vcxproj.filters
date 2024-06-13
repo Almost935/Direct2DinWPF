@@ -20,8 +20,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Direct2DDrawer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="Direct2DDrawer.cpp" />
   </ItemGroup>
 </Project>
