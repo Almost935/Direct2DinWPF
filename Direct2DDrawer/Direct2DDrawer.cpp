@@ -42,7 +42,7 @@ ID2D1SolidColorBrush*				m_pLightSlateGrayBrush;
 ID2D1SolidColorBrush*				m_pCornflowerBlueBrush;
 ID2D1StrokeStyle1*					strokeStyleFixedThickness;
 
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------;or-----
 // Name: CreateDeviceIndependentResources()
 // Desc: Creates the independent resources needed to draw Direct 2D 
 //-----------------------------------------------------------------------------
@@ -122,6 +122,7 @@ HRESULT CreateDeviceResources()
 //-----------------------------------------------------------------------------
 HRESULT InitD3D(HWND hWnd)
 {
+
 	HRESULT hr;
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC scd;
@@ -151,6 +152,9 @@ HRESULT InitD3D(HWND hWnd)
 		NULL,
 		&devcon);
 	if (FAILED(hr)) { return E_FAIL; }
+
+
+	CreateDeviceResources();
 
 	// Create the DXGI Surface Render Target.
 	float dpi = GetDpiForWindow(hWnd);
@@ -199,7 +203,7 @@ extern "C" __declspec(dllexport) IDXGISurface* WINAPI Initialize(HWND hwnd, int 
 	// Initialize Direct3D
 	if (SUCCEEDED(InitD3D(hwnd)))
 	{
-		if (SUCCEEDED(CreateDeviceIndependentResources))
+		if (SUCCEEDED(CreateDeviceIndependentResources()))
 		{
 			return pBackBuffer;
 		}
@@ -232,7 +236,6 @@ extern "C" __declspec(dllexport) VOID WINAPI Cleanup()
 extern "C" __declspec(dllexport) VOID WINAPI Render()
 {
 	HRESULT hr = S_OK;
-	hr = CreateDeviceResources();
 
 	if (m_pBackBufferRT &&
 		SUCCEEDED(hr))
